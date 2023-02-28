@@ -7,7 +7,7 @@ export default {
     if (!from || !message) {
       return res.status(400).send('empty')
     }
-    const { data, error } = await common.awaitWrap(chatgpt(from, message), { timeout: 26000 })
+    const { data, error } = await common.awaitWrap(chatgpt(from, message), { timeout: 36000 })
     res.json({ message: data?.response, error: error?.message })
   }
 }
