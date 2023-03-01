@@ -5,7 +5,7 @@ import env from '../helper/env.js'
 
 const { log } = model
 
-const clientOptions = {
+const browserClientOptions = {
     // (Optional) Support for a reverse proxy for the completions endpoint (private API server).
     // Warning: This will expose your access token to a third party. Consider the risks before using this.
     reverseProxyUrl: 'https://chatgpt.duti.tech/api/conversation',
@@ -17,18 +17,20 @@ const clientOptions = {
     // debug: true,
 }
 
-const chatGptClient = new ChatGPTBrowserClient(clientOptions)
+const chatGptClient = new ChatGPTBrowserClient(browserClientOptions)
 const conversationId = 'cd124db1-9b1d-4f12-a50d-828b1d2ba429'
 const parentMessageId = '643f740c-0b9e-4dfb-ac28-c113c1931c09' // default parentId
+let parentId = ''
 
 async function score (sender, message) {
     const question = `on a score of 1-5, 5 being the most likely, how likely that this is a scam? received a message from \`${sender}\` and it says: \`${message}\`` 
     log.debug('CHATGPT_SCAM_SCORE', question)
-    const { data, error } = await common.awaitWrap(chatGptClient.sendMessage(question, { conversationId, parentMessageId }), { timeout: 35000 })
+    const { data, error } = await common.awaitWrap(chatGptClient.sendMessage(question, { conversationId, parentMessageId: parentId || parentMessageId }), { timeout: 55000 })
     if (error) {
         log.error('ERR_SCAM_SCORE', error)
         throw error
     }
+    if (data.parentMessageId) parentId = data.parentMessageId
     return data
 }
 
