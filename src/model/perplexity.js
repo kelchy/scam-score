@@ -1,13 +1,16 @@
-// currently unused
+import PerplexityAI from 'perplexityai'
+import common from '@kelchy/common'
+import { model } from '../model/index.js'
 
-const PerplexityAI = require('perplexityai');
+const { log } = model
 
-const main = async() => {
-  const prompt = 'multiple choice. left, right, neutral. is this article biased? https://www.foxnews.com/world/u-s-forces-chinas-hand-revealing-possible-lethal-aid-russia-war-ukraine-experts';
-  //const prompt = 'multiple choice. left, right, neutral. is this article biased? https://www.foxnews.com/world/u-s-forces-chinas-hand-revealing-possible-lethal-aid-russia-war-ukraine-experts';
-  //const prompt = 'multiple choice. left, right, neutral. is this article biased? https://www.foxnews.com/politics/white-house-pushes-higher-rail-company-fines-ohio-visit';
-  const response = await PerplexityAI.search(prompt);
-  console.log('response', response);
+async function score (question) {
+  const { data, error } = await common.awaitWrap(PerplexityAI.search(question), { timeout: 30000 })
+  if (error) {
+    log.error('ERR_PERPLEXITY_SCAM', error)
+    throw error
+  }
+  return data?.detailed
 }
 
-main();
+export default score
