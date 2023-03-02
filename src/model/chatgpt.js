@@ -17,12 +17,12 @@ const browserClientOptions = {
   // debug: true,
 }
 
-const chatGptClient = new ChatGPTBrowserClient(browserClientOptions)
+const chatGptBrowserClient = new ChatGPTBrowserClient(browserClientOptions)
 const conversationId = 'cd124db1-9b1d-4f12-a50d-828b1d2ba429'
 const parentMessageId = '643f740c-0b9e-4dfb-ac28-c113c1931c09' // default parentId
 let parentId = ''
 
-async function score (question) {
+async function chatgpt (question) {
   let streaming = false
   // this 'timer' forces the promise below to bail out so logic can continue
   const timer = new Promise((resolve, reject) => {
@@ -32,14 +32,14 @@ async function score (question) {
       } else {
         resolve()
       }
-    }, 5000)
+    }, 7000)
   })
   // set streaming true to tell 'timer' above to ignore
   // this is to avoid timing out when server seem to not receive the request
   const sout = (sdata) => {
     streaming = true
   }
-  const gpt = chatGptClient.sendMessage(question, {
+  const gpt = chatGptBrowserClient.sendMessage(question, {
     conversationId,
     parentMessageId: parentId || parentMessageId,
     onProgress: sout
@@ -58,4 +58,4 @@ async function score (question) {
   return data[1]?.response
 }
 
-export default score
+export default chatgpt

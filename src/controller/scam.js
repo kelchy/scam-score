@@ -1,6 +1,6 @@
 import common from '@kelchy/common'
 import chatgpt from '../model/chatgpt.js'
-import perplexity from '../model/perplexity.js'
+import openai from '../model/openai.js'
 import { model } from '../model/index.js'
 
 const { log } = model
@@ -16,13 +16,13 @@ export default {
     let data = ""
     let error = ""
     let gpt = await common.awaitWrap(chatgpt(question))
-    let plex = {}
+    let ai = {}
     if (gpt.error) {
-      plex = await common.awaitWrap(perplexity(question))
-      if (plex.error) {
-         error = plex.error.message
+      ai = await common.awaitWrap(openai(question))
+      if (ai.error) {
+         error = ai.error.message
       }
-      data = plex.data
+      data = ai.data
     } else {
       data = gpt.data
     }
