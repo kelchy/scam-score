@@ -10,16 +10,16 @@ const client = new Client({ timeout: 5000 })
 export default {
   score: async (req, res) => {
     const hash = req.cookies.oid
-    const { from, message } = req.body
-    if (!from || !message) {
+    const { message } = req.body
+    if (!message) {
       return res.status(400).send('empty')
     }
     // fetch user details, we don't enforce the cookies for now
     const uri = `http://id.orbit.svc.cluster.local:3080/v1/labs/id/hash/user?hash=${hash}`
     // ignore error
     const { data: user } = await common.awaitWrap(client.get(uri))
-    const question = `on a score of 1-5, 5 being the most likely, how likely that this is a scam? received a message from \`${from}\` and it says: \`${message}\``
-    log.debug('SCAM_SCORE', `${user?.data?.id} ${hash} ${from} ${message}`)
+    const question = `on a scale of 1-5, 5 being the most likely, how likely is it that this is a scam? \`${message}\``
+    log.debug('SCAM_SCORE', `${user?.data?.id} ${hash} ${message}`)
     let data = ""
     let error = ""
     let gpt = await common.awaitWrap(chatgpt(question))
